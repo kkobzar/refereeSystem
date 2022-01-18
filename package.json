@@ -1,0 +1,25 @@
+{
+  "name": "refereesystem",
+  "version": "1.0.0",
+  "description": "System for football matches",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kkobzar/refereeSystem.git"
+  },
+  "keywords": [
+    "Express",
+    "Vue",
+    "SSR",
+    "MySQL"
+  ],
+  "author": "Kyryl Kobzar <kirilkobzar@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kkobzar/refereeSystem/issues"
+  },
+  "homepage": "https://github.com/kkobzar/refereeSystem#readme"
+}
