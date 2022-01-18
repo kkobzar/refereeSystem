@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt')
 const UserService = {
     async register(name,surname,password,email){
         //check if mail is in db
-        if (await this.isEmailRegistered(email)){
             let isRegistered = false
             //hash password
             const hashedPwd = await bcrypt.hash(password,process.env.HASH_SALT)
@@ -21,9 +20,6 @@ const UserService = {
             })
 
             return isRegistered
-        }else {
-            return new Error(`Email ${email} is already in use`)
-        }
     },
     isEmailRegistered(email){
         return new Promise((resolve, reject) => {
