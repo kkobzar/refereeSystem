@@ -12,7 +12,11 @@ const UserController = {
 
     },
     async refresh(req,res,next){
-
+        try {
+            res.json(['1','2'])
+        }catch (e){
+            console.error(e)
+        }
     }
 }
 
