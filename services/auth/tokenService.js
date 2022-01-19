@@ -17,7 +17,15 @@ const tokenService = {
             }else {
                 //if token exist for user, rewrite
                 if (res.length > 0){
-                    db.query(`UPDATE tokens SET userToken=${refreshToken} WHERE userId=${userId}`)
+                    db.query(`UPDATE tokens SET userToken=${refreshToken} WHERE userId=${userId}`,(err,rsl)=>{
+                        if (err){
+                            console.error(err)
+                        }else {
+
+                        }
+                    })
+                }else {
+                    db.query(`INSERT INTO tokens (userId,userToken) VALUES (${userId},${refreshToken})`)
                 }
             }
         })
