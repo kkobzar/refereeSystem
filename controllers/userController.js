@@ -25,7 +25,7 @@ const UserController = {
         if (!successfullyRegistered){
             res.json({error:'Internal error occurred'})
         }else {
-            res.sendStatus(202)
+            res.sendStatus(201)
         }
 
     },

@@ -2,7 +2,7 @@ require('dotenv').config()
 const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
-const {db} = require('./db')
+const db = require('./db')
 
 const PORT = process.env.PORT || 3000
 
@@ -19,21 +19,18 @@ app.use('/api/auth',require('./router/auth'))
 
 
 ;(function startServer() {
-    db.query('SELECT * FROM users',(err,res)=>{
-        if (err){
-            console.error(err)
-        }else {
-            console.log(res)
+    db.isConnected.then(()=>{
+        console.log('Connected to db')
+        try {
+            //start server if connected to db
+            app.listen(PORT,()=>{
+                console.log(`server is running on port ${PORT}`)
+            })
+        }catch (e) {
+            console.error(e)
         }
+    }).catch((err)=>{
+        console.log('Cant connect to database')
+        console.error(err)
     })
-    try {
-        //start server
-        app.listen(PORT,()=>{
-            console.log(`server is running on port ${PORT}`)
-        })
-
-    }catch (e) {
-        console.error(e)
-    }
 })();
-
