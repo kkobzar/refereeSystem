@@ -11,24 +11,22 @@ const tokenService = {
         }
     },
     async saveToken(userId, refreshToken){
-        db.query('SELECT * FROM tokens WHERE userId=?',[userId],(err,res)=>{
-            if (err){
-                console.error(err)
-            }else {
+        let tokenRegistered = false
+        db.query('SELECT * FROM tokens WHERE userId=?',[userId])
+            .then(([row,field])=>{
                 //if token exist for user, rewrite
-                if (res.length > 0){
-                    db.query(`UPDATE tokens SET userToken=${refreshToken} WHERE userId=${userId}`,(err,rsl)=>{
-                        if (err){
-                            console.error(err)
-                        }else {
-
-                        }
-                    })
-                }else {
-                    db.query(`INSERT INTO tokens (userId,userToken) VALUES (${userId},${refreshToken})`)
+                if (row.length > 0){
+                    tokenRegistered = true
                 }
-            }
-        })
+            })
+            .catch(e=>console.error(e))
+
+        if (tokenRegistered){
+            await db.query(`UPDATE tokens SET userToken=${refreshToken} WHERE userId=${userId}`).catch(e=>console.error(e))
+        }else {
+            await db.query(`INSERT INTO tokens (userId,userToken) VALUES (${userId},${refreshToken})`).catch(e=>console.error(e))
+        }
+
     }
 }
 
