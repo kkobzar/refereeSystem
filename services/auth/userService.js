@@ -25,6 +25,15 @@ const UserService = {
 
         return isRegistered
     },
+    async activate(activationId){
+        //find user with activation id
+        const user = await db.query('SELECT * FROM users WHERE activationId = ?',activationId)
+            .then(([row,fields])=>{
+                if (row.length > 0){
+                    db.query('UPDATE users SET activated = 1 WHERE activationId = ?',activationId)
+                }
+            })
+    },
     isEmailRegistered(email){
         return new Promise((resolve, reject) => {
             db.query(`SELECT email FROM users WHERE email = '${email}'`)

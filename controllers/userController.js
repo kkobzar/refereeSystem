@@ -39,7 +39,13 @@ const UserController = {
 
     },
     async activate(req,res,next){
+        const {link} = req.params
 
+        try {
+            await userService.activate(link)
+        }catch (e) {
+            next(e)
+        }
     },
     async refresh(req,res,next){
         try {

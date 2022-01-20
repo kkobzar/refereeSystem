@@ -25,38 +25,7 @@ const db = {
                 resolve(true)
             }
         })
-    }),
-    writeData(table,data){
-        return new Promise((resolve, reject) => {
-            let q = 'INSERT INTO ' + table + ' ('
-            for (const d in data){
-                q += d + ', '
-            }
-            //remove last coma
-            q = q.slice(0,-2)
-            q+=') VALUES ('
-            for (const d in data){
-                q += '?, '
-            }
-            //remove last coma
-            q = q.slice(0,-2)
-            q += ' )';
-            let dataRows = []
-            for (const d in data){
-                dataRows.push(data[d])
-            }
-            console.log(q)
-            console.log(dataRows)
-            this.db.query(q, dataRows,(err,rsl)=>{
-                if (err){
-                    console.error(err)
-                    reject(err)
-                }else {
-                    resolve(true)
-                }
-            })
-        })
-    }
+    })
 }
 
 module.exports = db
