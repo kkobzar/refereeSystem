@@ -3,6 +3,7 @@ const express = require('express')
 const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const db = require('./db')
+const errorMiddleware = require('./middleware/error-middleware')
 
 const PORT = process.env.PORT || 3000
 
@@ -17,6 +18,7 @@ app.use(express.urlencoded({extended:false}))
 app.use(cookieParser())
 app.use(cors())
 app.use('/api/auth',require('./router/auth'))
+app.use(errorMiddleware)
 
 
 ;(function startServer() {

@@ -24,7 +24,7 @@ const tokenService = {
         if (tokenRegistered){
             await db.query(`UPDATE tokens SET userToken=${refreshToken} WHERE userId=${userId}`).catch(e=>console.error(e))
         }else {
-            await db.query(`INSERT INTO tokens (userId,userToken) VALUES (${userId},${refreshToken})`).catch(e=>console.error(e))
+            await db.query(`INSERT INTO tokens (userId,userToken) VALUES (${userId},'${refreshToken}')`).catch(e=>console.error(e))
         }
 
     }

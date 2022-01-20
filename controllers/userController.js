@@ -1,48 +1,39 @@
 const userService = require('../services/auth/userService')
+
 const UserController = {
     async register(req,res,next){
         const {name,surname,password,passwordConfirm,email} = req.body
-
-        //check if fields are empty
-        if (!name || !surname || !password || !passwordConfirm || !email){
-            res.json({error:'All fields are mandatory'})
-            return;
-        }
-
-        //check if passwords match
-        if (password !== passwordConfirm){
-            res.json({error:'Passwords should match'})
-            return
-        }
-
-        //check if email is taken
-        const registered = await userService.isEmailRegistered(email)
-        if (registered){
-            res.json({error:'Email is taken'})
-            return
-        }
-
-        //register user
-        const successfullyRegistered = await userService.register(name,surname,password,email)
-
-        if (!successfullyRegistered){
-            res.json({error:'Internal error occurred'})
-        }else {
+        try {
+            //register user
+            await userService.register(name,surname,password,passwordConfirm,email)
             res.sendStatus(201)
+        }catch (e) {
+            next(e)
         }
 
     },
     async login(req,res,next){
-
+        try {
+            const {email,password} = req.body
+            const user = await userService.login(email,password)
+            res.cookie('refreshToken',user.refreshToken,{maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            res.json(user)
+        }catch (e){
+            next(e)
+        }
     },
     async logout(req,res,next){
+        try {
 
+        }catch (e) {
+            next(e)
+        }
     },
     async activate(req,res,next){
         const {link} = req.params
-
         try {
             await userService.activate(link)
+            res.redirect(process.env.CLIENT_URL)
         }catch (e) {
             next(e)
         }
@@ -51,7 +42,7 @@ const UserController = {
         try {
             res.json(['1','2'])
         }catch (e){
-            console.error(e)
+            next(e)
         }
     }
 }

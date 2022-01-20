@@ -1,10 +1,24 @@
 const {db} = require('../../db')
 const bcrypt = require('bcrypt')
 const uuid = require('uuid')
+const ApiError = require("../../exceptions/apiError");
+const tokenService = require('./tokenService')
+const userDto = require('../../dto/userDTO')
+const {raw} = require("express");
 
 
 const UserService = {
-    async register(name,surname,password,email){
+    async register(name,surname,password,passwordConfirm,email){
+        //check if email is taken
+        if (await this.isEmailRegistered(email)){
+            throw ApiError.BadRequest('Email is taken')
+        }
+
+        //check if passwords match
+        if (password !== passwordConfirm){
+            throw ApiError.BadRequest('Passwords should match')
+        }
+
         let isRegistered = false
 
         //hash password
@@ -25,12 +39,30 @@ const UserService = {
 
         return isRegistered
     },
+    async login(email,password){
+        const [row,f] = await db.query('SELECT * FROM users WHERE email = ?',email)
+        if (row.length === 0){
+            throw ApiError.BadRequest('No user with this email')
+        }else {
+            //check if passwords match
+            if(await bcrypt.compare(password,row[0].password)){
+                //generate token
+                let payload = new userDto(row[0])
+                const tokens = tokenService.generateToken({...payload})
+                //save token
+                await tokenService.saveToken(payload.id,tokens.refreshToken)
+                return {...tokens, user: payload}
+            }else {
+                throw ApiError.BadRequest('Wrong password')
+            }
+        }
+    },
     async activate(activationId){
         //find user with activation id
         const user = await db.query('SELECT * FROM users WHERE activationId = ?',activationId)
             .then(([row,fields])=>{
                 if (row.length > 0){
-                    db.query('UPDATE users SET activated = 1 WHERE activationId = ?',activationId)
+                    db.query('UPDATE users SET isActivated = 1 WHERE activationId = ?',activationId)
                 }
             })
     },
