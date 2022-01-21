@@ -20,6 +20,11 @@ const tokenService = {
             await db.query(`INSERT INTO tokens (userId,userToken) VALUES (${userId},'${refreshToken}')`).catch(e=>console.error(e))
         }
 
+    },
+    async removeToken(refreshToken){
+        const [r,f] = await db.query('DELETE FROM tokens WHERE userToken = ?',refreshToken)
+        console.log(r)
+        return r;
     }
 }
 

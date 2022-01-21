@@ -1,9 +1,15 @@
 const userService = require('../services/auth/userService')
+const {validationResult} = require('express-validator')
+const ApiError = require('../exceptions/apiError')
 
 const UserController = {
     async register(req,res,next){
         const {name,surname,password,passwordConfirm,email} = req.body
         try {
+            const validation = validationResult(req)
+            if (!validation.isEmpty()){
+                return next(ApiError.BadRequest('Validation errors',validation.array()))
+            }
             //register user
             await userService.register(name,surname,password,passwordConfirm,email)
             res.sendStatus(201)
@@ -24,7 +30,10 @@ const UserController = {
     },
     async logout(req,res,next){
         try {
-
+            const {refreshToken} = req.cookies
+            const token = userService.logout(refreshToken)
+            res.clearCookie('refreshToken')
+            res.send(token)
         }catch (e) {
             next(e)
         }

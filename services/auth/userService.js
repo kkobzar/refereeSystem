@@ -57,6 +57,9 @@ const UserService = {
             }
         }
     },
+    async logout(refreshToken){
+        return  await tokenService.removeToken(refreshToken)
+    },
     async activate(activationId){
         //find user with activation id
         const user = await db.query('SELECT * FROM users WHERE activationId = ?',activationId)
