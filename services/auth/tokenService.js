@@ -23,9 +23,28 @@ const tokenService = {
     },
     async removeToken(refreshToken){
         const [r,f] = await db.query('DELETE FROM tokens WHERE userToken = ?',refreshToken)
+        return r;
+    },
+    validateRefreshToken(token){
+        try {
+            return jwt.verify(token,process.env.JWT_REFRESH_SECRET)
+        }catch (e) {
+            return null
+        }
+    },
+    validateAccessToken(token){
+        try {
+            return jwt.verify(token,process.env.JWT_ACCESS_SECRET)
+        }catch (e) {
+            return null
+        }
+    },
+    async findToken(token){
+        const [r,f] = await db.query('SELECT * FROM tokens WHERE userToken = ?',token)
         console.log(r)
         return r;
     }
+
 }
 
 module.exports = tokenService

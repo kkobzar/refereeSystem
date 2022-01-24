@@ -15,7 +15,7 @@ const regValidation = checkSchema({
 
 router.post('/register',body('email').not().isEmpty().isEmail(),
     body('password').isLength({min:5}),userController.register)
-router.post('/login',body('email').isEmail(),userController.login)
+router.post('/login',body('email').not().isEmpty().isEmail(),body('password').not().isEmpty(),userController.login)
 router.post('/logout',userController.logout)
 
 router.get('/activate/:link',userController.activate)

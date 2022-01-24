@@ -40,6 +40,9 @@ const UserService = {
         return isRegistered
     },
     async login(email,password){
+        if (!email || !password){
+            throw ApiError.BadRequest('No credentials')
+        }
         const [row,f] = await db.query('SELECT * FROM users WHERE email = ?',email)
         if (row.length === 0){
             throw ApiError.BadRequest('No user with this email')
@@ -68,6 +71,29 @@ const UserService = {
                     db.query('UPDATE users SET isActivated = 1 WHERE activationId = ?',activationId)
                 }
             })
+    },
+    async refresh(refreshToken){
+        if(!refreshToken){
+            throw ApiError.UnauthorizedError()
+        }
+
+        const userData = tokenService.validateRefreshToken(refreshToken)
+        const tokenFromDb = tokenService.findToken(refreshToken)
+
+        if(!userData || !tokenFromDb){
+            throw ApiError.UnauthorizedError()
+        }
+
+        const [user,f] = await db.query('SELECT * FROM users WHERE id = ?',userData.userId)
+
+        const userDto = new userDto(user)
+        const tokens = tokenService.generateToken(userDto)
+        await tokenService.saveToken(user.id,tokens.refreshToken)
+
+        return{
+            ...tokens,
+            user:userDto
+        }
     },
     isEmailRegistered(email){
         return new Promise((resolve, reject) => {

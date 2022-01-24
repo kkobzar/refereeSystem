@@ -1,5 +1,5 @@
 const userService = require('../services/auth/userService')
-const {validationResult} = require('express-validator')
+const {validationResult, body} = require('express-validator')
 const ApiError = require('../exceptions/apiError')
 
 const UserController = {
@@ -21,6 +21,7 @@ const UserController = {
     async login(req,res,next){
         try {
             const {email,password} = req.body
+            console.log(req.body)
             const user = await userService.login(email,password)
             res.cookie('refreshToken',user.refreshToken,{maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             res.json(user)
@@ -49,7 +50,10 @@ const UserController = {
     },
     async refresh(req,res,next){
         try {
-            res.json(['1','2'])
+            const {refreshToken} = req.cookies;
+            const user = await userService.refresh(refreshToken)
+            res.cookie('refreshToken',user.refreshToken,{maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            res.json(user)
         }catch (e){
             next(e)
         }
