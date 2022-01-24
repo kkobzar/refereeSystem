@@ -95,6 +95,11 @@ const UserService = {
             user:userDto
         }
     },
+    async getAllUsers(){
+        const [r,f] = await db.query('SELECT * FROM users')
+        console.log(r)
+        return r;
+    },
     isEmailRegistered(email){
         return new Promise((resolve, reject) => {
             db.query(`SELECT email FROM users WHERE email = '${email}'`)
