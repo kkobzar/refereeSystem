@@ -11,8 +11,9 @@ const UserController = {
                 return next(ApiError.BadRequest('Validation errors',validation.array()))
             }
             //register user
-            await userService.register(name,surname,password,passwordConfirm,email)
-            res.sendStatus(201)
+            const user = await userService.register(name,surname,password,passwordConfirm,email)
+
+            res.json(user)
         }catch (e) {
             next(e)
         }
@@ -21,7 +22,6 @@ const UserController = {
     async login(req,res,next){
         try {
             const {email,password} = req.body
-            console.log(req.body)
             const user = await userService.login(email,password)
             res.cookie('refreshToken',user.refreshToken,{maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
             res.json(user)

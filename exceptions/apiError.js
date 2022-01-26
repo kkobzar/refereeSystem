@@ -12,6 +12,10 @@ module.exports = class ApiError extends Error{
         return new ApiError(401, 'Unauthorized access')
     }
 
+    static ServerError(){
+        return new ApiError(500,'Server error')
+    }
+
     static BadRequest(message, errors = []) {
         return new ApiError(400, message, errors);
     }

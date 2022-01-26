@@ -37,7 +37,23 @@ const UserService = {
                 isRegistered = true
             }).catch(e=>console.error(e))
 
-        return isRegistered
+        if (!isRegistered) {
+            throw ApiError.ServerError()
+        }
+
+        //get new user info
+        const [row,f] = await db.query('SELECT * FROM users WHERE email = ?',email)
+
+        //generate token
+        let payload = new userDto(row[0])
+        const tokens = tokenService.generateToken({...payload})
+        //save token
+        await tokenService.saveToken(payload.id,tokens.refreshToken)
+
+        return {
+            ...tokens,
+            user:payload
+        }
     },
     async login(email,password){
         if (!email || !password){
