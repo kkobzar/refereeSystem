@@ -2,13 +2,15 @@ module.exports = class UserDto {
     email;
     id;
     isActivated;
-    role;
+    name;
+    surname;
 
     constructor(user) {
         this.email = user.email
         this.id = user.id
         this.isActivated = user.isActivated;
-        this.role = user.role;
+        this.surname = user.surname;
+        this.name = user.name;
     }
 
 }
