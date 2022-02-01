@@ -3,7 +3,7 @@ const {db} = require('../../db')
 
 const tokenService = {
     generateToken(payload){
-        const accessToken = jwt.sign(payload,process.env.JWT_ACCESS_SECRET,{expiresIn: '45m'})
+        const accessToken = jwt.sign(payload,process.env.JWT_ACCESS_SECRET,{expiresIn: '2m'})
         const refreshToken = jwt.sign(payload,process.env.JWT_REFRESH_SECRET,{expiresIn: '30d'})
         return {
             accessToken,
@@ -41,7 +41,6 @@ const tokenService = {
     },
     async findToken(token){
         const [r,f] = await db.query('SELECT * FROM tokens WHERE userToken = ?',token)
-        console.log(r)
         return r;
     }
 

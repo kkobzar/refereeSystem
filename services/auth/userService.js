@@ -94,21 +94,22 @@ const UserService = {
         }
 
         const userData = tokenService.validateRefreshToken(refreshToken)
-        const tokenFromDb = tokenService.findToken(refreshToken)
+        const tokenFromDb = await tokenService.findToken(refreshToken)
 
-        if(!userData || !tokenFromDb){
+        if(!userData || !tokenFromDb || !tokenFromDb.length){
             throw ApiError.UnauthorizedError()
         }
 
-        const [user,f] = await db.query('SELECT * FROM users WHERE id = ?',userData.userId)
+        const [user,f] = await db.query('SELECT * FROM users WHERE id = ?',userData.id)
 
-        const userDto = new userDto(user)
-        const tokens = tokenService.generateToken(userDto)
+        const userDTO = new userDto(user[0])
+        console.log(userDTO)
+        const tokens = tokenService.generateToken({...userDTO})
         await tokenService.saveToken(user.id,tokens.refreshToken)
 
         return{
             ...tokens,
-            user:userDto
+            user:userDTO
         }
     },
     async getAllUsers(){
