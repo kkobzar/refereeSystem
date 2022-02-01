@@ -96,7 +96,7 @@ const UserService = {
         const userData = tokenService.validateRefreshToken(refreshToken)
         const tokenFromDb = await tokenService.findToken(refreshToken)
 
-        if(!userData || !tokenFromDb || !tokenFromDb.length){
+        if(!userData || !tokenFromDb){
             throw ApiError.UnauthorizedError()
         }
 
@@ -114,8 +114,12 @@ const UserService = {
     },
     async getAllUsers(){
         const [r,f] = await db.query('SELECT * FROM users')
-        console.log(r)
-        return r;
+        const result = []
+        r.forEach(i=>{
+            const dto = new userDto(i)
+            result.push(dto)
+        })
+        return result;
     },
     isEmailRegistered(email){
         return new Promise((resolve, reject) => {
