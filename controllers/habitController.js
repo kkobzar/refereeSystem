@@ -36,6 +36,13 @@ const habitController = {
         }catch (e) {
             next(e)
         }
+    },
+    async checkHabit(req,res,next){
+        try{
+
+        }catch (e) {
+            next(e)
+        }
     }
 }
 

@@ -14,14 +14,14 @@ const habitService = {
     },
     async removeHabit(habitId = 0){
         if (!habitId){
-            throw ApiError.BadRequest('Bad habit id')
+            throw ApiError.BadRequest('Invalid habit id')
         }
 
         await db.query('DELETE FROM habits WHERE id = ?',habitId)
     },
     async getHabit(habitId = 0){
         if (!habitId){
-            throw ApiError.BadRequest('Bad habit id')
+            throw ApiError.BadRequest('Invalid habit id')
         }
 
         const [r,f] = await db.query("SELECT * FROM habits WHERE id = ?",habitId)
@@ -30,6 +30,17 @@ const habitService = {
             return false
         }
         return r[0]
+    },
+    async checkHabit(habitId = 0,date = null){
+        if (!habitId){
+            throw ApiError.BadRequest('Invalid habit id')
+        }
+
+        if (!date || !date instanceof Date){
+            throw ApiError.BadRequest('Invalid date')
+        }
+
+        await db.query("INSERT INTO habitsChecks SET = ?", {habitId,dateChecked:date})
     }
 }
 
