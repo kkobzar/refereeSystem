@@ -16,6 +16,20 @@ const habitService = {
         if (!habitId){
             throw ApiError.BadRequest('Bad habit id')
         }
+
+        await db.query('DELETE FROM habits WHERE id = ?',habitId)
+    },
+    async getHabit(habitId = 0){
+        if (!habitId){
+            throw ApiError.BadRequest('Bad habit id')
+        }
+
+        const [r,f] = await db.query("SELECT * FROM habits WHERE id = ?",habitId)
+
+        if (!r.length){
+            return false
+        }
+        return r[0]
     }
 }
 

@@ -7,5 +7,5 @@ const authMiddleware = require('../middleware/auth-middleware')
 router.get('/users',authMiddleware,userController.getUsers)
 
 router.post('/addHabit',authMiddleware,habitController.addHabit)
-
+router.delete('/removeHabit',authMiddleware,habitController.removeHabit)
 module.exports = router
