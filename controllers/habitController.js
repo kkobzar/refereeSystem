@@ -1,4 +1,5 @@
 const habitService = require('../services/core/habitService')
+const habitChecksService = require('../services/core/habitChecksService')
 const tokenService = require('../services/auth/tokenService')
 const ApiError = require('../exceptions/apiError')
 
@@ -37,6 +38,25 @@ const habitController = {
             next(e)
         }
     },
+    async editHabit(req,res,next){
+        try{
+            const {habitId} = req.body
+
+            const token = req.headers.authorization.split(' ')[1]
+            const userData = tokenService.validateAccessToken(token)
+
+            //compare userId from token with habit userId in table
+            const habit  = await habitService.getHabit(habitId)
+
+            if (habit.userId !== userData.id){
+                return next(ApiError.UnauthorizedError())
+            }
+
+
+        }catch (e) {
+            next(e)
+        }
+    },
     async toggleHabit(req,res,next){
         try{
             const {habitId,date} = req.body
@@ -49,7 +69,7 @@ const habitController = {
             const token = req.headers.authorization.split(' ')[1]
             const userData = tokenService.validateAccessToken(token)
 
-            await habitService.checkHabit(habitId,new Date(date),userData.id)
+            await habitChecksService.checkHabit(habitId,new Date(date),userData.id)
 
             res.sendStatus(200)
         }catch (e) {
