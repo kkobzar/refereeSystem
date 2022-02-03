@@ -37,9 +37,16 @@ const habitController = {
             next(e)
         }
     },
-    async checkHabit(req,res,next){
+    async toggleHabit(req,res,next){
         try{
+            const {habitId,date} = req.body
 
+            const token = req.headers.authorization.split(' ')[1]
+            const userData = tokenService.validateAccessToken(token)
+
+            await habitService.checkHabit(habitId,new Date(date),userData.id)
+
+            res.sendStatus(200)
         }catch (e) {
             next(e)
         }
