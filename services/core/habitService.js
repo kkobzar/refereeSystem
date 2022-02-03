@@ -50,6 +50,18 @@ const habitService = {
         }else{
             await db.query("INSERT INTO habitsChecks SET ?", {habitId,checkDate:formattedDate,userId})
         }
+    },
+    async getUserHabits(userId = 0){
+        if (!userId){
+            throw ApiError.BadRequest('No user ID')
+        }
+        const [r,f] = await db.query("SELECT * FROM habits WHERE userId = ?", userId)
+
+        if (r.length){
+            return r
+        }else {
+            return false;
+        }
     }
 }
 

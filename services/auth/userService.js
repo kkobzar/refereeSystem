@@ -103,7 +103,7 @@ const UserService = {
         const [user,f] = await db.query('SELECT * FROM users WHERE id = ?',userData.id)
 
         const userDTO = new userDto(user[0])
-        console.log(userDTO)
+
         const tokens = tokenService.generateToken({...userDTO})
         await tokenService.saveToken(userDTO.id,tokens.refreshToken)
 

@@ -10,4 +10,6 @@ router.post('/addHabit',authMiddleware,habitController.addHabit)
 router.delete('/removeHabit',authMiddleware,habitController.removeHabit)
 
 router.post('/toggleHabit', authMiddleware,habitController.toggleHabit)
+
+router.get('/userHabits',authMiddleware,habitController.getUserHabits)
 module.exports = router
