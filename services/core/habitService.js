@@ -58,10 +58,22 @@ const habitService = {
         const [r,f] = await db.query("SELECT * FROM habits WHERE userId = ?", userId)
 
         if (r.length){
-            return r
+            return r;
         }else {
             return false;
         }
+    },
+    async getHabitsChecks(habitId = 0,userId = 0){
+        if (!userId){
+            throw ApiError.BadRequest('No user ID')
+        }
+        if (!habitId){
+            throw ApiError.BadRequest('No habit ID')
+        }
+
+        const [r,f] = await db.query("SELECT checkDate FROM habitsChecks WHERE userId = ? AND habitId = ?",[userId,habitId])
+
+        return r;
     }
 }
 

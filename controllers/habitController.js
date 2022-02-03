@@ -67,6 +67,20 @@ const habitController = {
         }catch (e) {
             next(e)
         }
+    },
+    async getHabitsChecks(req,res,next){
+        try {
+            const {habitId} = req.body
+
+            const token = req.headers.authorization.split(' ')[1]
+            const userData = tokenService.validateAccessToken(token)
+
+            const checksDates = await habitService.getHabitsChecks(habitId,userData.id)
+
+            res.json(checksDates)
+        }catch (e) {
+            next(e)
+        }
     }
 }
 
