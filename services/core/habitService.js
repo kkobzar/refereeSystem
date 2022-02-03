@@ -19,8 +19,20 @@ const habitService = {
 
         await db.query('DELETE FROM habits WHERE id = ?',habitId)
     },
-    async editHabit(habitId){
+    async editHabit(habitId= 0, title = null, question = null){
+        if (!habitId){
+            throw ApiError.BadRequest('Invalid habit id')
+        }
 
+        const editData = {}
+        if (!title){
+            editData.title = title
+        }
+        if (!question){
+            editData.question = question
+        }
+
+        await db.query("")
     },
     async getHabit(habitId = 0){
         if (!habitId){

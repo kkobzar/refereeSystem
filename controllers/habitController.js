@@ -3,13 +3,17 @@ const habitChecksService = require('../services/core/habitChecksService')
 const tokenService = require('../services/auth/tokenService')
 const ApiError = require('../exceptions/apiError')
 
+const getUserInfo = (req)=>{
+    const token = req.headers.authorization.split(' ')[1]
+    return tokenService.validateAccessToken(token)
+}
+
 const habitController = {
     async addHabit(req,res,next){
         try{
             const {title, question} = req.body
 
-            const token = req.headers.authorization.split(' ')[1]
-            const userData = tokenService.validateAccessToken(token)
+            const userData = getUserInfo(req)
 
             await habitService.addHabit(userData.id, title, question)
             res.sendStatus(201)
@@ -21,12 +25,12 @@ const habitController = {
         try{
             const {habitId} = req.body
 
-            const token = req.headers.authorization.split(' ')[1]
-            const userData = tokenService.validateAccessToken(token)
-
             //compare userId from token with habit userId in table
             const habit  = await habitService.getHabit(habitId)
-
+            if(!habit){
+                return next(ApiError.BadRequest('No habit with ID'))
+            }
+            const userData = getUserInfo(req)
             if (habit.userId !== userData.id){
                 return next(ApiError.UnauthorizedError())
             }
@@ -40,19 +44,20 @@ const habitController = {
     },
     async editHabit(req,res,next){
         try{
-            const {habitId} = req.body
-
-            const token = req.headers.authorization.split(' ')[1]
-            const userData = tokenService.validateAccessToken(token)
+            const {habitId,title,question} = req.body
 
             //compare userId from token with habit userId in table
             const habit  = await habitService.getHabit(habitId)
 
+            if(!habit){
+                return next(ApiError.BadRequest('No habit with ID'))
+            }
+            const userData = getUserInfo(req)
             if (habit.userId !== userData.id){
                 return next(ApiError.UnauthorizedError())
             }
 
-
+            await habitService.editHabit(habitId,title,question)
         }catch (e) {
             next(e)
         }
@@ -66,8 +71,7 @@ const habitController = {
                 return next(ApiError.BadRequest('Invalid habit Id'))
             }
 
-            const token = req.headers.authorization.split(' ')[1]
-            const userData = tokenService.validateAccessToken(token)
+            const userData = getUserInfo(req)
 
             await habitChecksService.checkHabit(habitId,new Date(date),userData.id)
 
@@ -78,8 +82,7 @@ const habitController = {
     },
     async getUserHabits(req,res,next){
         try{
-            const token = req.headers.authorization.split(' ')[1]
-            const userData = tokenService.validateAccessToken(token)
+            const userData = getUserInfo(req)
 
             const habits = await habitService.getUserHabits(userData.id)
 
@@ -92,8 +95,7 @@ const habitController = {
         try {
             const {habitId} = req.body
 
-            const token = req.headers.authorization.split(' ')[1]
-            const userData = tokenService.validateAccessToken(token)
+            const userData = getUserInfo(req)
 
             const checksDates = await habitService.getHabitsChecks(habitId,userData.id)
 
