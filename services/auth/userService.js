@@ -105,7 +105,7 @@ const UserService = {
         const userDTO = new userDto(user[0])
         console.log(userDTO)
         const tokens = tokenService.generateToken({...userDTO})
-        await tokenService.saveToken(user.id,tokens.refreshToken)
+        await tokenService.saveToken(userDTO.id,tokens.refreshToken)
 
         return{
             ...tokens,

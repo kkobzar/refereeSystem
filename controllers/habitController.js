@@ -41,6 +41,11 @@ const habitController = {
         try{
             const {habitId,date} = req.body
 
+            const habit  = await habitService.getHabit(habitId)
+            if (!habit){
+                return next(ApiError.BadRequest('Invalid habit Id'))
+            }
+
             const token = req.headers.authorization.split(' ')[1]
             const userData = tokenService.validateAccessToken(token)
 

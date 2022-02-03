@@ -40,14 +40,15 @@ const habitService = {
             throw ApiError.BadRequest('Invalid date')
         }
 
-        const formatedDate = date.toJSON().slice(0,10).replace(/-/g,'-')
+        const formattedDate = date.toJSON().slice(0,10).replace(/-/g,'-')
+
         //find if habit is checked
-        const [r,f] = await db.query("SELECT * FROM habitsChecks WHERE habitId = ? AND dateChecked = ? AND userId = ?",[habitId,formatedDate,userId])
+        const [r,f] = await db.query("SELECT * FROM habitsChecks WHERE habitId = ? AND checkDate = ? AND userId = ?",[habitId,formattedDate,userId])
 
         if (r.length){
-            await db.query("DELETE FROM habitsChecks WHERE habitId = ? AND dateChecked = ? AND userId = ?", [habitId,formatedDate,userId])
+            await db.query("DELETE FROM habitsChecks WHERE habitId = ? AND checkDate = ? AND userId = ?", [habitId,formattedDate,userId])
         }else{
-            await db.query("INSERT INTO habitsChecks SET = ?", {habitId,dateChecked:date,userId})
+            await db.query("INSERT INTO habitsChecks SET ?", {habitId,checkDate:formattedDate,userId})
         }
     }
 }
