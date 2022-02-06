@@ -15,8 +15,8 @@ const habitController = {
 
             const userData = getUserInfo(req)
 
-            await habitService.addHabit(userData.id, title, question)
-            res.sendStatus(201)
+            const habit = await habitService.addHabit(userData.id, title, question)
+            res.json(habit)
         }catch (e) {
             next(e)
         }

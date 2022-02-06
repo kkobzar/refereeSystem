@@ -10,7 +10,10 @@ const habitService = {
             throw ApiError.BadRequest('Title must be provided')
         }
 
-        await db.query('INSERT INTO habits SET ?', {userId,title,question})
+        const [r,f] = await db.query('INSERT INTO habits SET ?', {userId,title,question})
+
+        const [row,fl] = await db.query("SELECT * FROM habits WHERE id = ?",r.insertId)
+        return row[0]
     },
     async removeHabit(habitId = 0){
         if (!habitId){
