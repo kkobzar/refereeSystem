@@ -57,7 +57,8 @@ const habitController = {
                 return next(ApiError.UnauthorizedError())
             }
 
-            await habitService.editHabit(habitId,title,question)
+            const editedHabit = await habitService.editHabit(habitId,title,question)
+            res.json(editedHabit)
         }catch (e) {
             next(e)
         }

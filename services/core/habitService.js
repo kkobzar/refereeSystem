@@ -28,14 +28,21 @@ const habitService = {
         }
 
         const editData = {}
-        if (!title){
+        if (title){
             editData.title = title
         }
-        if (!question){
+        if (question){
             editData.question = question
         }
 
-        await db.query("")
+        if (!Object.keys(editData).length){
+            throw ApiError.BadRequest('No edit data provided!')
+        }
+
+        const [r,f] = await db.query("UPDATE habits SET ? WHERE id = ?", [editData,habitId])
+
+        const [row,fl] = await db.query("SELECT * FROM habits WHERE id = ?",habitId)
+        return row[0]
     },
     async getHabit(habitId = 0){
         if (!habitId){
